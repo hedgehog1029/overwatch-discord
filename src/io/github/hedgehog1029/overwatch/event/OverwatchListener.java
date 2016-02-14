@@ -2,6 +2,7 @@ package io.github.hedgehog1029.overwatch.event;
 
 import io.github.hedgehog1029.overwatch.Overwatch;
 import io.github.hedgehog1029.overwatch.cmd.CommandManager;
+import io.github.hedgehog1029.overwatch.prefix.PrefixManager;
 import io.github.hedgehog1029.overwatch.util.ArgumentParser;
 import io.github.hedgehog1029.overwatch.util.args.ArgumentList;
 import me.itsghost.jdiscord.event.EventListener;
@@ -16,9 +17,9 @@ public class OverwatchListener implements EventListener {
 		if (message.length() < 2) return;
 		if (e.getUser().getUser().getId().equals(Overwatch.getApi().getSelfInfo().getId())) return;
 
-		if (message.charAt(0) == '!') {
-			String cmd = message.split("!")[1].split("\\s")[0];
-			String sargs = message.replaceAll("!\\w+\\s*", "");
+		if (message.charAt(0) == PrefixManager.getPrefix(e.getServer().getId())) {
+			String cmd = PrefixManager.getCommand(e.getServer(), message);
+			String sargs = PrefixManager.getArgs(e.getServer(), message);
 
 			ArgumentList args = ArgumentParser.parse(sargs);
 

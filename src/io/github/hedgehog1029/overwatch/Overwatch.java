@@ -4,6 +4,7 @@ import io.github.hedgehog1029.overwatch.cmd.CommandManager;
 import io.github.hedgehog1029.overwatch.cmd.self.*;
 import io.github.hedgehog1029.overwatch.event.OverwatchListener;
 import io.github.hedgehog1029.overwatch.perms.PermissionManager;
+import io.github.hedgehog1029.overwatch.prefix.PrefixManager;
 import io.github.hedgehog1029.overwatch.sleep.SleepManager;
 import io.github.hedgehog1029.overwatch.util.Pickle;
 import me.itsghost.jdiscord.DiscordAPI;
@@ -55,6 +56,7 @@ public class Overwatch {
 
 		PermissionManager.restore((JSONObject) data.get("people"));
 		SleepManager.restore((JSONObject) data.get("muted"));
+		PrefixManager.restore((JSONObject) data.get("prefixes"));
 
 		pickle.reader().end();
 	}

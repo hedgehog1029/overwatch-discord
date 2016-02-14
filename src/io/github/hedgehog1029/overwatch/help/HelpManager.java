@@ -1,54 +1,72 @@
 package io.github.hedgehog1029.overwatch.help;
 
 import io.github.hedgehog1029.overwatch.cmd.Command;
+import io.github.hedgehog1029.overwatch.cmd.CommandManager;
 import io.github.hedgehog1029.overwatch.cmd.Description;
+import io.github.hedgehog1029.overwatch.cmd.ServerWhitelist;
 import io.github.hedgehog1029.overwatch.perms.Rank;
+import me.itsghost.jdiscord.Server;
+import sun.security.krb5.internal.crypto.Des;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 public class HelpManager {
-	private StringBuilder normal = new StringBuilder();
-	private StringBuilder trusted = new StringBuilder();
-	private StringBuilder admin = new StringBuilder();
+
+	private HashMap<Rank, List<Command>> sorted = new HashMap<>();
 
 	public HelpManager() {
-		normal.append("Public commands: \n");
-		trusted.append("Trusted commands: \n");
-		admin.append("Admin-only commands: \n");
+		for (Rank r : Rank.values()) {
+			sorted.put(r, new ArrayList<>());
+		}
 	}
 
 	public void append(Command c) {
-		Description descriptor = c.getClass().getDeclaredAnnotation(Description.class);
-
-		if (descriptor == null) return; // if no descriptor, assume 'hidden' command
-
-		switch (c.getRequiredRank()) {
-			case NONE:
-				normal.append("`!").append(descriptor.usage()).append(": ").append(descriptor.desc()).append("`\n");
-				break;
-			case TRUSTED:
-				trusted.append("`!").append(descriptor.usage()).append(": ").append(descriptor.desc()).append("`\n");
-				break;
-			case ADMINISTRATOR:
-				admin.append("`!").append(descriptor.usage()).append(": ").append(descriptor.desc()).append("`\n");
-				break;
-			default: break;
-		}
+		sorted.get(c.getRequiredRank()).add(c);
 	}
 
-	public String getHelpFor(Rank rank) {
-		StringBuilder help = new StringBuilder();
+	public String getHelpFor(Server server, Rank rank) {
+		StringBuilder result = new StringBuilder();
 
 		switch (rank) {
 			case ADMINISTRATOR:
-				help.append(admin.toString());
+				StringBuilder admin = new StringBuilder();
+				admin.append("Admin-only commands:\n");
+
+				this.appendCommands(server, Rank.ADMINISTRATOR, admin);
+				result.append(admin);
 			case TRUSTED:
-				help.append(trusted.toString());
-			case NONE:
-				help.append(normal.toString());
-				break;
+				StringBuilder trust = new StringBuilder();
+				trust.append("Trusted commands:\n");
+
+				this.appendCommands(server, Rank.TRUSTED, trust);
+				result.append(trust);
 			default:
-				help.append(normal.toString());
+				StringBuilder norm = new StringBuilder();
+				norm.append("Public commands:\n");
+
+				this.appendCommands(server, Rank.NONE, norm);
+				result.append(norm);
 		}
 
-		return help.toString();
+		return result.toString();
+	}
+
+	private void appendCommands(Server server, Rank rank, StringBuilder builder) {
+		sorted.get(rank).forEach(c -> {
+			Description description = c.getClass().getDeclaredAnnotation(Description.class);
+			ServerWhitelist whitelist = c.getClass().getDeclaredAnnotation(ServerWhitelist.class);
+
+			if (description == null) return;
+			if (whitelist != null) {
+				if (Arrays.asList(whitelist.value()).contains(server.getId())) builder.append(format(description));
+			} else builder.append(format(description));
+		});
+	}
+
+	private String format(Description desc) {
+		return String.format("`!%s: %s`\n", desc.usage(), desc.desc());
 	}
 }

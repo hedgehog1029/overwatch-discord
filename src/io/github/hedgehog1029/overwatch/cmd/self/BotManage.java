@@ -7,6 +7,7 @@ import io.github.hedgehog1029.overwatch.cmd.err.NoPermissionException;
 import io.github.hedgehog1029.overwatch.event.OverwatchListener;
 import io.github.hedgehog1029.overwatch.perms.PermissionManager;
 import io.github.hedgehog1029.overwatch.perms.Rank;
+import io.github.hedgehog1029.overwatch.prefix.PrefixManager;
 import io.github.hedgehog1029.overwatch.sleep.SleepManager;
 import io.github.hedgehog1029.overwatch.util.ChatUtil;
 import io.github.hedgehog1029.overwatch.util.Pickle;
@@ -99,11 +100,19 @@ public class BotManage implements Command {
 
 				parent.put("people", people);
 				parent.put("muted", muted);
+				parent.put("prefixes", PrefixManager.toJSON());
 
 				pickle.writer().write(parent);
 				pickle.writer().end();
 
 				ChatUtil.sendResponse(group, sender, "Successfully saved my data! ^w^");
+				break;
+			case "prefix":
+				char prefix = args.get(1).charAt(0);
+
+				PrefixManager.setPrefix(origin.getId(), prefix);
+
+				ChatUtil.sendResponse(group, sender, "Prefix for " + origin.getName() + " set to `" + prefix + "`!");
 				break;
 			case "dance":
 				ChatUtil.sendResponse(group, sender, "Now dancing... ╚(ಠ_ಠ)=┐");
@@ -112,7 +121,8 @@ public class BotManage implements Command {
 				group.sendMessage("<('-'<)<('-')>(>'-')>");
 				break;
 			default:
-				ChatUtil.sendResponse(group, sender, "You need to specify an action!");
+				ChatUtil.sendResponse(group, sender, "You need to specify an action! Available actions: \n" +
+						"`shutdown, sleep, join, save, prefix, dance, kirbydance`");
 		}
 	}
 }

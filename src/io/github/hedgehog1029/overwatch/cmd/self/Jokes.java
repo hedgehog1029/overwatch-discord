@@ -5,9 +5,9 @@ import io.github.hedgehog1029.overwatch.cmd.Description;
 import io.github.hedgehog1029.overwatch.perms.Rank;
 import io.github.hedgehog1029.overwatch.util.ChatUtil;
 import io.github.hedgehog1029.overwatch.util.args.ArgumentList;
-import me.itsghost.jdiscord.Server;
-import me.itsghost.jdiscord.talkable.Group;
-import me.itsghost.jdiscord.talkable.User;
+import net.dv8tion.jda.entities.Guild;
+import net.dv8tion.jda.entities.TextChannel;
+import net.dv8tion.jda.entities.User;
 
 import java.util.Random;
 
@@ -55,7 +55,7 @@ public class Jokes implements Command {
 	private Random random = new Random();
 
 	@Override
-	public void run(User sender, Server origin, Group group, ArgumentList args) {
+	public void run(User sender, Guild origin, TextChannel group, ArgumentList args) {
 		String joke = jokes[random.nextInt(jokes.length)];
 
 		ChatUtil.sendResponse(group, sender, joke);

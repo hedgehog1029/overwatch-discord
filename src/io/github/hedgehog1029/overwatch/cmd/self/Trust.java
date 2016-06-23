@@ -5,11 +5,11 @@ import io.github.hedgehog1029.overwatch.cmd.Description;
 import io.github.hedgehog1029.overwatch.perms.PermissionManager;
 import io.github.hedgehog1029.overwatch.perms.Rank;
 import io.github.hedgehog1029.overwatch.util.ChatUtil;
+import io.github.hedgehog1029.overwatch.util.Finder;
 import io.github.hedgehog1029.overwatch.util.args.ArgumentList;
-import me.itsghost.jdiscord.Server;
-import me.itsghost.jdiscord.talkable.Group;
-import me.itsghost.jdiscord.talkable.GroupUser;
-import me.itsghost.jdiscord.talkable.User;
+import net.dv8tion.jda.entities.Guild;
+import net.dv8tion.jda.entities.TextChannel;
+import net.dv8tion.jda.entities.User;
 
 @Description(usage = "trust <user>", desc = "Trust a kind person! Or untrust them. I don't judge.")
 public class Trust implements Command {
@@ -25,25 +25,25 @@ public class Trust implements Command {
 	}
 
 	@Override
-	public void run(User sender, Server origin, Group group, ArgumentList args) {
-		GroupUser target = origin.getGroupUserByUsername(args.get(0));
+	public void run(User sender, Guild origin, TextChannel group, ArgumentList args) {
+		User target = Finder.findUser(group, args.get(0));
 
 		if (target == null) {
 			ChatUtil.sendResponse(group, sender, "User " + args.get(0) + " not found!");
 			return;
 		}
 
-		if (PermissionManager.getRank(target.getUser()) == Rank.ADMINISTRATOR) {
+		if (PermissionManager.getRank(target) == Rank.ADMINISTRATOR) {
 			ChatUtil.sendResponse(group, sender, "You can't untrust an administrator!");
 			return;
 		}
 
-		if (PermissionManager.getRank(target.getUser()) == Rank.TRUSTED) {
-			PermissionManager.demote(target.getUser());
-			ChatUtil.sendResponse(group, sender, String.format("%s is no longer trusted!", target.getUser().getUsername()));
+		if (PermissionManager.getRank(target) == Rank.TRUSTED) {
+			PermissionManager.demote(target);
+			ChatUtil.sendResponse(group, sender, String.format("%s is no longer trusted!", target.getUsername()));
 		} else {
-			PermissionManager.promote(target.getUser());
-			ChatUtil.sendResponse(group, sender, String.format("%s is now trusted!", target.getUser().getUsername()));
+			PermissionManager.promote(target);
+			ChatUtil.sendResponse(group, sender, String.format("%s is now trusted!", target.getUsername()));
 		}
 	}
 }

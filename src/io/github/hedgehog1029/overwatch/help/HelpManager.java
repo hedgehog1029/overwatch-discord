@@ -1,12 +1,10 @@
 package io.github.hedgehog1029.overwatch.help;
 
 import io.github.hedgehog1029.overwatch.cmd.Command;
-import io.github.hedgehog1029.overwatch.cmd.CommandManager;
 import io.github.hedgehog1029.overwatch.cmd.Description;
 import io.github.hedgehog1029.overwatch.cmd.ServerWhitelist;
 import io.github.hedgehog1029.overwatch.perms.Rank;
-import me.itsghost.jdiscord.Server;
-import sun.security.krb5.internal.crypto.Des;
+import net.dv8tion.jda.entities.Guild;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +25,7 @@ public class HelpManager {
 		sorted.get(c.getRequiredRank()).add(c);
 	}
 
-	public String getHelpFor(Server server, Rank rank) {
+	public String getHelpFor(Guild server, Rank rank) {
 		StringBuilder result = new StringBuilder();
 
 		switch (rank) {
@@ -54,7 +52,7 @@ public class HelpManager {
 		return result.toString();
 	}
 
-	private void appendCommands(Server server, Rank rank, StringBuilder builder) {
+	private void appendCommands(Guild server, Rank rank, StringBuilder builder) {
 		sorted.get(rank).forEach(c -> {
 			Description description = c.getClass().getDeclaredAnnotation(Description.class);
 			ServerWhitelist whitelist = c.getClass().getDeclaredAnnotation(ServerWhitelist.class);

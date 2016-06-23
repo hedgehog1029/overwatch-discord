@@ -19,6 +19,11 @@ public class ArgumentList {
 		this.original = original;
 	}
 
+	public boolean checkValid(int reqLength) {
+		if (arguments.size() < reqLength) return false;
+		else return true;
+	}
+
 	public ArrayList<String> getArguments() {
 		return this.arguments;
 	}

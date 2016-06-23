@@ -1,6 +1,6 @@
 package io.github.hedgehog1029.overwatch.prefix;
 
-import me.itsghost.jdiscord.Server;
+import net.dv8tion.jda.entities.Guild;
 import org.json.simple.JSONObject;
 
 import java.util.HashMap;
@@ -13,6 +13,10 @@ public class PrefixManager {
 		return prefixes.containsKey(sid) ? prefixes.get(sid) : defaultPrefix;
 	}
 
+	public static char getDefaultPrefix() {
+		return defaultPrefix;
+	}
+
 	public static void setPrefix(String sid, char prefix) {
 		if (prefixes.containsKey(sid))
 			prefixes.replace(sid, prefix);
@@ -20,12 +24,20 @@ public class PrefixManager {
 			prefixes.put(sid, prefix);
 	}
 
-	public static String getCommand(Server server, String message) {
-		return message.split(String.valueOf(getPrefix(server.getId())))[1].split("\\s")[0];
+	public static String getCommand(Guild server, String message) {
+		return extractCommand(getPrefix(server.getId()), message);
 	}
 
-	public static String getArgs(Server server, String message) {
-		return message.replaceAll(getPrefix(server.getId()) + "\\w+\\s*", "");
+	public static String extractCommand(char prefix, String message) {
+		return message.split(String.valueOf(prefix))[1].split("\\s")[0];
+	}
+
+	public static String getArgs(Guild server, String message) {
+		return extractArgs(getPrefix(server.getId()), message);
+	}
+
+	public static String extractArgs(char prefix, String message) {
+		return message.replaceAll(prefix + "\\w+\\s*", "");
 	}
 
 	public static void restore(JSONObject object) {

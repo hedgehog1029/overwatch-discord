@@ -2,12 +2,12 @@ package io.github.hedgehog1029.overwatch.cmd;
 
 import io.github.hedgehog1029.overwatch.perms.Rank;
 import io.github.hedgehog1029.overwatch.util.args.ArgumentList;
-import me.itsghost.jdiscord.Server;
-import me.itsghost.jdiscord.talkable.Group;
-import me.itsghost.jdiscord.talkable.User;
+import net.dv8tion.jda.entities.Guild;
+import net.dv8tion.jda.entities.TextChannel;
+import net.dv8tion.jda.entities.User;
 
 public interface Command {
 	String[] getAliases();
 	Rank getRequiredRank();
-	void run(User sender, Server origin, Group group, ArgumentList args);
+	void run(User sender, Guild origin, TextChannel channel, ArgumentList args);
 }

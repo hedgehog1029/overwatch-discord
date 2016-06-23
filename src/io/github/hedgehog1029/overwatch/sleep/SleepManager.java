@@ -1,7 +1,7 @@
 package io.github.hedgehog1029.overwatch.sleep;
 
-import me.itsghost.jdiscord.Server;
-import me.itsghost.jdiscord.talkable.Group;
+import net.dv8tion.jda.entities.Channel;
+import net.dv8tion.jda.entities.Guild;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -30,7 +30,7 @@ public class SleepManager {
 		return GLOBAL_ENABLED;
 	}
 
-	public static boolean toggleServer(Server server) {
+	public static boolean toggleServer(Guild server) {
 		boolean muted = mutedServers.contains(server.getId());
 
 		if (muted) mutedServers.remove(server.getId());
@@ -39,7 +39,7 @@ public class SleepManager {
 		return !muted;
 	}
 
-	public static boolean toggleChannel(Group group) {
+	public static boolean toggleChannel(Channel group) {
 		boolean muted = mutedChannels.contains(group.getId());
 
 		if (muted) mutedChannels.remove(group.getId());
@@ -48,7 +48,7 @@ public class SleepManager {
 		return !muted;
 	}
 
-	public static boolean toggleOverride(Group group) {
+	public static boolean toggleOverride(Channel group) {
 		boolean overriden = overrideChannels.contains(group.getId());
 
 		if (overriden) overrideChannels.remove(group.getId());
@@ -57,7 +57,7 @@ public class SleepManager {
 		return !overriden;
 	}
 
-	public static boolean willRespond(String command, Group group, Server server) {
+	public static boolean willRespond(String command, Channel group, Guild server) {
 		if (command.equalsIgnoreCase("manage")) return true;
 
 		if (overrideChannels.contains(group.getId())) return true;

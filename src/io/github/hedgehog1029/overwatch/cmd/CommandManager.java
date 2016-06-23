@@ -5,9 +5,7 @@ import io.github.hedgehog1029.overwatch.perms.PermissionManager;
 import io.github.hedgehog1029.overwatch.sleep.SleepManager;
 import io.github.hedgehog1029.overwatch.util.ChatUtil;
 import io.github.hedgehog1029.overwatch.util.args.ArgumentList;
-import me.itsghost.jdiscord.Server;
-import me.itsghost.jdiscord.talkable.Group;
-import me.itsghost.jdiscord.talkable.User;
+import net.dv8tion.jda.entities.*;
 
 import java.util.HashMap;
 
@@ -44,7 +42,7 @@ public class CommandManager {
 		return helpManager;
 	}
 
-	public static void dispatch(String command, User sender, Group group, Server server, ArgumentList args) {
+	public static void dispatch(String command, User sender, TextChannel group, Guild server, ArgumentList args) {
 		Command cmd = commands.get(command);
 
 		if (cmd == null) return; // if the command isn't known, do nothing; no spam!

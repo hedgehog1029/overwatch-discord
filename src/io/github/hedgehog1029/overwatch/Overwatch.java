@@ -3,20 +3,20 @@ package io.github.hedgehog1029.overwatch;
 import io.github.hedgehog1029.overwatch.cmd.CommandManager;
 import io.github.hedgehog1029.overwatch.cmd.self.*;
 import io.github.hedgehog1029.overwatch.event.OverwatchListener;
+import io.github.hedgehog1029.overwatch.mod.EmoteManager;
 import io.github.hedgehog1029.overwatch.perms.PermissionManager;
 import io.github.hedgehog1029.overwatch.prefix.PrefixManager;
 import io.github.hedgehog1029.overwatch.sleep.SleepManager;
 import io.github.hedgehog1029.overwatch.util.Pickle;
-import me.itsghost.jdiscord.DiscordAPI;
-import me.itsghost.jdiscord.DiscordBuilder;
-import me.itsghost.jdiscord.exception.BadUsernamePasswordException;
-import me.itsghost.jdiscord.exception.DiscordFailedToConnectException;
-import me.itsghost.jdiscord.exception.NoLoginDetailsException;
+import net.dv8tion.jda.JDA;
+import net.dv8tion.jda.JDABuilder;
 import org.json.simple.JSONObject;
+
+import javax.security.auth.login.LoginException;
 
 public class Overwatch {
 
-	static DiscordAPI api;
+	static JDA api;
 
 	public static void main(String[] args) {
 		System.out.println("[overwatch] Starting Overwatch (Discord Edition)");
@@ -25,26 +25,29 @@ public class Overwatch {
 
 		JSONObject details = login.reader().read();
 
-		api = new DiscordBuilder((String) details.get("email"), (String) details.get("password")).build();
+		JDABuilder jdab = new JDABuilder()
+				.setBotToken((String) details.get("token"))
+				.addListener(new OverwatchListener());
 
 		login.reader().end();
 
 		try {
-			api.login();
-		} catch (DiscordFailedToConnectException | BadUsernamePasswordException | NoLoginDetailsException e) {
+			api = jdab.buildAsync();
+		} catch (LoginException e) {
 			e.printStackTrace();
 		}
-
-		api.getEventManager().registerListener(new OverwatchListener());
 
 		CommandManager.registerCommand(new ARG());
 		CommandManager.registerCommand(new BeanShell());
 		CommandManager.registerCommand(new BotManage());
 		CommandManager.registerCommand(new DirectMessage());
 		CommandManager.registerCommand(new Echo());
+		CommandManager.registerCommand(new Emote());
 		CommandManager.registerCommand(new Google());
 		CommandManager.registerCommand(new HelpTopic());
 		CommandManager.registerCommand(new Jokes());
+		CommandManager.registerCommand(new Music());
+		CommandManager.registerCommand(new Random());
 		CommandManager.registerCommand(new SteamInfo());
 		CommandManager.registerCommand(new Trust());
 		CommandManager.registerCommand(new UserId());
@@ -57,6 +60,7 @@ public class Overwatch {
 		PermissionManager.restore((JSONObject) data.get("people"));
 		SleepManager.restore((JSONObject) data.get("muted"));
 		PrefixManager.restore((JSONObject) data.get("prefixes"));
+		EmoteManager.restore((JSONObject) data.get("emotes"));
 
 		pickle.reader().end();
 	}
@@ -65,7 +69,7 @@ public class Overwatch {
 		System.out.println("[overwatch] Overwatch started! Username: " + api.getSelfInfo().getUsername());
 	}
 
-	public static DiscordAPI getApi() {
+	public static JDA getApi() {
 		return api;
 	}
 }

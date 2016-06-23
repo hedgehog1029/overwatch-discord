@@ -1,12 +1,11 @@
 package io.github.hedgehog1029.overwatch.perms;
 
-import me.itsghost.jdiscord.talkable.User;
+import net.dv8tion.jda.entities.User;
 import org.json.simple.JSONObject;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 public class PermissionManager {
 	private static HashMap<String, Rank> ranks = new HashMap<>();

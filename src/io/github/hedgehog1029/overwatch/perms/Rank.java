@@ -1,6 +1,8 @@
 package io.github.hedgehog1029.overwatch.perms;
 
-public enum  Rank {
+import org.json.simple.JSONAware;
+
+public enum Rank implements JSONAware {
 	ADMINISTRATOR(10),
 	TRUSTED(5),
 	NONE(0);

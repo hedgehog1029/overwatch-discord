@@ -3,8 +3,7 @@ package io.github.hedgehog1029.overwatch.cmd.self;
 import io.github.hedgehog1029.overwatch.Overwatch;
 import io.github.hedgehog1029.overwatch.cmd.Command;
 import io.github.hedgehog1029.overwatch.cmd.Description;
-import io.github.hedgehog1029.overwatch.cmd.err.NoPermissionException;
-import io.github.hedgehog1029.overwatch.event.OverwatchListener;
+import io.github.hedgehog1029.overwatch.mod.EmoteManager;
 import io.github.hedgehog1029.overwatch.perms.PermissionManager;
 import io.github.hedgehog1029.overwatch.perms.Rank;
 import io.github.hedgehog1029.overwatch.prefix.PrefixManager;
@@ -12,9 +11,8 @@ import io.github.hedgehog1029.overwatch.sleep.SleepManager;
 import io.github.hedgehog1029.overwatch.util.ChatUtil;
 import io.github.hedgehog1029.overwatch.util.Pickle;
 import io.github.hedgehog1029.overwatch.util.args.ArgumentList;
-import me.itsghost.jdiscord.Server;
-import me.itsghost.jdiscord.talkable.Group;
-import me.itsghost.jdiscord.talkable.User;
+import net.dv8tion.jda.entities.*;
+import net.dv8tion.jda.utils.InviteUtil;
 import org.json.simple.JSONObject;
 
 @Description(usage = "manage <action>", desc = "Manage my settings!")
@@ -31,11 +29,11 @@ public class BotManage implements Command {
 	}
 
 	@Override
-	public void run(User sender, Server origin, Group group, ArgumentList args) {
+	public void run(User sender, Guild origin, TextChannel group, ArgumentList args) {
 		switch(args.get(0)) {
 			case "shutdown":
 				group.sendMessage("Shutting down now! I'll be back soon, probably!");
-				Overwatch.getApi().stop();
+				Overwatch.getApi().shutdown();
 				break;
 			case "sleep":
 				if (args.get(1) != null) {
@@ -79,12 +77,9 @@ public class BotManage implements Command {
 
 				joinId = joinId.replaceAll("(?:http(?:s)*://)*discord\\.gg[/]*", "");
 
-				Boolean success = Overwatch.getApi().joinInviteId(joinId);
-
-				if (success)
-					ChatUtil.sendResponse(group, sender, "Successfully joined that server! :D");
-				else
-					ChatUtil.sendResponse(group, sender, "I couldn't join that server. :(");
+				InviteUtil.join(joinId, Overwatch.getApi(), (g) -> {
+					ChatUtil.sendResponse(group, sender, String.format("Joined %s!", g.getName()));
+				});
 
 				break;
 			case "save":
@@ -101,6 +96,7 @@ public class BotManage implements Command {
 				parent.put("people", people);
 				parent.put("muted", muted);
 				parent.put("prefixes", PrefixManager.toJSON());
+				parent.put("emotes", EmoteManager.serialize());
 
 				pickle.writer().write(parent);
 				pickle.writer().end();

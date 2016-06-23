@@ -7,9 +7,9 @@ import io.github.hedgehog1029.overwatch.perms.PermissionManager;
 import io.github.hedgehog1029.overwatch.perms.Rank;
 import io.github.hedgehog1029.overwatch.util.ChatUtil;
 import io.github.hedgehog1029.overwatch.util.args.ArgumentList;
-import me.itsghost.jdiscord.Server;
-import me.itsghost.jdiscord.talkable.Group;
-import me.itsghost.jdiscord.talkable.User;
+import net.dv8tion.jda.entities.Guild;
+import net.dv8tion.jda.entities.TextChannel;
+import net.dv8tion.jda.entities.User;
 
 @Description(usage = "help", desc = "List commands and help!")
 public class HelpTopic implements Command {
@@ -24,7 +24,7 @@ public class HelpTopic implements Command {
 	}
 
 	@Override
-	public void run(User sender, Server origin, Group group, ArgumentList args) {
+	public void run(User sender, Guild origin, TextChannel group, ArgumentList args) {
 		Rank userRank = PermissionManager.getRank(sender) != null ? PermissionManager.getRank(sender) : Rank.NONE;
 
 		ChatUtil.sendResponse(group, sender, CommandManager.getHelpManager().getHelpFor(origin, userRank));

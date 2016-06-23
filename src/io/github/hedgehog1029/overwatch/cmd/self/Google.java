@@ -6,9 +6,9 @@ import io.github.hedgehog1029.overwatch.net.NetConnection;
 import io.github.hedgehog1029.overwatch.perms.Rank;
 import io.github.hedgehog1029.overwatch.util.ChatUtil;
 import io.github.hedgehog1029.overwatch.util.args.ArgumentList;
-import me.itsghost.jdiscord.Server;
-import me.itsghost.jdiscord.talkable.Group;
-import me.itsghost.jdiscord.talkable.User;
+import net.dv8tion.jda.entities.Guild;
+import net.dv8tion.jda.entities.TextChannel;
+import net.dv8tion.jda.entities.User;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -32,7 +32,7 @@ public class Google implements Command {
 	}
 
 	@Override
-	public void run(User sender, Server origin, Group group, ArgumentList args) {
+	public void run(User sender, Guild origin, TextChannel group, ArgumentList args) {
 		try {
 			String url = BASE_URL + args.getFull("+");
 			String result = NetConnection.getData(url);
